@@ -3,18 +3,26 @@
 	<label>Url</label>
 	<input ng-model="request.url"></input>
 
-	<h3>Oauth</h3>
-	<label>Consumer Key</label>
-	<input ng-model="request.oauth.consumer_key"></input>
+	<br/>
+	<button ng-click="toggleOauth()">Oauth</button>
 
-	<label>Consumer Secret</label>
-	<input ng-model="request.oauth.consumer_secret"></input>
+	<div ng-show="hasOauth">
+		<h3>Oauth</h3>
+		<label>Consumer Key</label>
+		<input ng-model="request.oauth.consumer_key"></input>
 
-	<label>Token</label>
-	<input ng-model="request.oauth.token"></input>
+		<label>Consumer Secret</label>
+		<input ng-model="request.oauth.consumer_secret"></input>
 
-	<label>Verifier</label>
-	<input ng-model="request.oauth.token_secret"></input>
+		<label>Token</label>
+		<input ng-model="request.oauth.token"></input>
+
+		<label>Verifier</label>
+		<input ng-model="request.oauth.token_secret"></input>
+	</div>
+
+	<br/>
+	
 	<button ng-click="getDataRequest()">REQUEST</button>
 
 	<div ng-show="result.data">
@@ -25,4 +33,7 @@
 		
 		{{result.processed}}
 	</div>
+
+	<chart-viz val="jsonData"></chart-viz>
+	<div id="chart"></div>
 </section>
