@@ -30,8 +30,10 @@
 		<label>Query</label>
 		<input ng-model="result.query"></input></br>
 		<button ng-click="describeData()">Describe</button>
-		
+		<label>Processed Description</label>
 		{{result.processed}}
+		<label>All Data</label>
+		{{result.data}}
 	</div>
 
 	<chart-viz val="jsonData"></chart-viz>
