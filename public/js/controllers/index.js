@@ -383,6 +383,21 @@ angular.module('mean').controller('IndexController', ['$scope', 'Global', 'Pulls
       }
      ]
     }
+    $scope.jsonData = {
+      name: "Animal",
+      children: [
+        {
+          name: "Mammal",
+          children: [
+            {name:"Cat"},
+            {name:"Dog"}
+          ]
+        },
+        {
+          name: "Fish"
+        }
+      ]
+    };
 
     $scope.hasOauth = false;
 
@@ -395,12 +410,20 @@ angular.module('mean').controller('IndexController', ['$scope', 'Global', 'Pulls
     	console.log("called getDataRequest");
     	console.log("$scope.request = %j", $scope.request);
     	Pulls.get($scope.request, function(pullResults){
+        $scope.jsonData = pullResults;
     		$scope.result.data = pullResults;
     		$scope.result.query = "/";
     		$scope.describeData()
     		console.log("pullResults = %j", pullResults);
     		console.log("response");
     	});
+    }
+
+    $scope.pruneFieldsFn = function (){
+      $scope.pruneResults = {};
+      $scope.pruneResults.names = $scope.result.pruneFields.split(",");
+      $scope.pruneResults.values = prune.json($scope.jsonData).getTableWithArray($scope.pruneResults.names, $scope.pruneResults.names);
+      console.log("values = %j", $scope.pruneResults.values);
     }
 
     $scope.describeData = function () {

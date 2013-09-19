@@ -11,6 +11,9 @@ function chartViz(jsonData){
   var mydiagonal = d3.svg.diagonal()
     .projection(function(d) { return [d.y, d.x]; });
 
+  // d3.select("#chart")
+  //   .remove("svg:svg")
+
   var myvis = d3.select("#chart")
     .append("svg:svg")
       .attr("width", width)

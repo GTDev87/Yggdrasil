@@ -1,6 +1,5 @@
 function chart () {
     //defaults
-    var that = this;
     var width = 0,
 		barHeight = 0,
 		barWidth = 0,
@@ -102,26 +101,24 @@ function chart () {
 
 		// Toggle children on click.
 		function click(d) {
-		if (d.children) {
-			d._children = d.children;
-			d.children = null;
-		} else {
-			d.children = d._children;
-			d._children = null;
-		}
+			if (d.children) {
+				d._children = d.children;
+				d.children = null;
+			} else {
+				d.children = d._children;
+				d._children = null;
+			}
 
-		var thisChart = chart()
-			.barHeight(barHeight)
-			.barWidth(barWidth)
-			.duration(duration)
-			.root(root)
-			.source(d)
-			.diagonal(diagonal)
-			.vis(vis)
-			.tree(tree)
-			.i(i);
-
-			thisChart();
+			chart()
+				.barHeight(barHeight)
+				.barWidth(barWidth)
+				.duration(duration)
+				.root(root)
+				.source(d)
+				.diagonal(diagonal)
+				.vis(vis)
+				.tree(tree)
+				.i(i)();
 		}
 
 		function color(d) {
