@@ -11,15 +11,19 @@ function chartViz(jsonData){
   var mydiagonal = d3.svg.diagonal()
     .projection(function(d) { return [d.y, d.x]; });
 
-  // d3.select("#chart")
-  //   .remove("svg:svg")
+  var svg = d3.select("#chart > svg");
 
-  var myvis = d3.select("#chart")
-    .append("svg:svg")
+
+  if (svg.empty()){
+    d3.select("#chart")
+      .append("svg:svg")
       .attr("width", width)
       .attr("height", height)
     .append("svg:g")
       .attr("transform", "translate(20,30)");
+  }
+
+  var myvis = d3.select("#chart").select("svg g");
 
   chart()
     .barHeight(20)
