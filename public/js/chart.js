@@ -1,130 +1,141 @@
 function chart () {
+
     //defaults
-    var width = 0,
-		barHeight = 0,
-		barWidth = 0,
-		duration = 0,
-		root = {},
-		source = {},
-		diagonal = function(){},
-		vis = {},
-		tree = {},
+    var width = 960,
+    	height = 800,
+		barHeight = 20,
+		barWidth = width * .8,
+		duration = 400,
+		diagonal = d3.svg.diagonal()
+    		.projection(function(d) { return [d.y, d.x]; }),
 		i = 0;
 
-    var myChart = function(){
-		console.log("source = %j", source);
+    var myChart = function(selection){
+    	selection.each(function(data){
+    		var depth = 1,
+          		container = d3.select(this);
 
-		// Compute the flattened node list. TODO use d3.layout.hierarchy.
-		var nodes = tree.nodes(root);
+          	var tree = d3.layout.tree()
+        		.children(function(d) { return d.children })
+        		.size([height, 100]);
 
-		// Compute the "layout".
-		nodes.forEach(function(n, i) {
-			n.x = i * barHeight;
-		});
 
-		// Update the nodes…
-		var node = vis.selectAll("g.node")
-			.data(nodes, function(d) { return d.id || (d.id = ++i); });
+    		myChart.update = function() { container.transition().duration(600).call(myChart) };
 
-		var nodeEnter = node.enter().append("svg:g")
-			.attr("class", "node")
-			.attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
-			.style("opacity", 1e-6);
+    		source = data[0];
+    		console.log("data = %j", data);
+    		console.log("source = %j", source);
 
-		// Enter any new nodes at the parent's previous position.
-		nodeEnter.append("svg:rect")
-			.attr("y", -barHeight / 2)
-			.attr("height", barHeight)
-			.attr("width", barWidth)
-			.style("fill", color)
-			.on("click", click);
+			// Compute the flattened node list. TODO use d3.layout.hierarchy.
+			var nodes = tree.nodes(source);
 
-		nodeEnter.append("svg:text")
-			.attr("dy", 3.5)
-			.attr("dx", 5.5)
-			.text(function(d) { return d.name; });
+			// Compute the "layout".
+			nodes.forEach(function(n, i) {
+				n.x = i * barHeight;
+			});
 
-		// Transition nodes to their new position.
-		nodeEnter.transition()
-			.duration(duration)
-			.attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
-			.style("opacity", 1);
+			// Update the nodes…
+			var node = container.selectAll("g.node")
+				.data(nodes, function(d) { return d.id || (d.id = ++i); });
 
-		node.transition()
-			.duration(duration)
-			.attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
-			.style("opacity", 1)
-		.select("rect")
-			.style("fill", color);
+			var nodeEnter = node.enter().append("svg:g")
+				.attr("class", "node")
+				.attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
+				.style("opacity", 1e-6);
 
-		// Transition exiting nodes to the parent's new position.
-		node.exit().transition()
-			.duration(duration)
-			.attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
-			.style("opacity", 1e-6)
-			.remove();
+			// Enter any new nodes at the parent's previous position.
+			nodeEnter.append("svg:rect")
+				.attr("y", -barHeight / 2)
+				.attr("height", barHeight)
+				.attr("width", barWidth)
+				.style("fill", color)
+				.on("click", click);
 
-		// Update the links…
-		var link = vis.selectAll("path.link")
-			.data(tree.links(nodes), function(d) { return d.target.id; });
+			nodeEnter.append("svg:text")
+				.attr("dy", 3.5)
+				.attr("dx", 5.5)
+				.text(function(d) { return d.name; });
 
-		// Enter any new links at the parent's previous position.
-		link.enter().insert("svg:path", "g")
-			.attr("class", "link")
-			.attr("d", function(d) {
-		    	var o = {x: source.x0, y: source.y0};
-		    	return diagonal({source: o, target: o});
-			})
-		.transition()
-			.duration(duration)
-			.attr("d", diagonal);
+			// Transition nodes to their new position.
+			nodeEnter.transition()
+				.duration(duration)
+				.attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
+				.style("opacity", 1);
 
-		// Transition links to their new position.
-		link.transition()
-			.duration(duration)
-			.attr("d", diagonal);
+			node.transition()
+				.duration(duration)
+				.attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
+				.style("opacity", 1)
+			.select("rect")
+				.style("fill", color);
 
-		// Transition exiting nodes to the parent's new position.
-		link.exit().transition()
-			.duration(duration)
-			.attr("d", function(d) {
-				var o = {x: source.x, y: source.y};
-				return diagonal({source: o, target: o});
-			})
-			.remove();
+			// Transition exiting nodes to the parent's new position.
+			node.exit().transition()
+				.duration(duration)
+				.attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
+				.style("opacity", 1e-6)
+				.remove();
 
-		// Stash the old positions for transition.
-		nodes.forEach(function(d) {
-			d.x0 = d.x;
-			d.y0 = d.y;
-		});
+			// Update the links…
+			var link = container.selectAll("path.link")
+				.data(tree.links(nodes), function(d) { 
+					console.log("new d = %j", d);
+					return d.target.id; 
+				});
 
-		// Toggle children on click.
-		function click(d) {
-			if (d.children) {
-				d._children = d.children;
-				d.children = null;
-			} else {
-				d.children = d._children;
-				d._children = null;
+			// Enter any new links at the parent's previous position.
+			link.enter().insert("svg:path", "g")
+				.attr("class", "link")
+				.attr("d", function(d) {
+					console.log("enter link d = %j", d);
+			    	var o = {x: source.x0, y: source.y0};
+			    	console.log("after enter");
+			    	return diagonal({source: o, target: o});
+				})
+			.transition()
+				.duration(duration)
+				.attr("d", diagonal);
+
+			// Transition links to their new position.
+			link.transition()
+				.duration(duration)
+				.attr("d", diagonal);
+
+			// Transition exiting nodes to the parent's new position.
+			link.exit().transition()
+				.duration(duration)
+				.attr("d", function(d) {
+					var o = {x: source.x, y: source.y};
+					return diagonal({source: o, target: o});
+				})
+				.remove();
+
+			// Stash the old positions for transition.
+			nodes.forEach(function(d) {
+				d.x0 = d.x;
+				d.y0 = d.y;
+			});
+
+			// Toggle children on click.
+			function click(d) {
+				if (d.children) {
+					d._children = d.children;
+					d.children = null;
+				} else {
+					d.children = d._children;
+					d._children = null;
+				}
+				console.log("d = %j", d)
+
+				myChart
+					.source(d)
+					.update();
 			}
 
-			chart()
-				.barHeight(barHeight)
-				.barWidth(barWidth)
-				.duration(duration)
-				.root(root)
-				.source(d)
-				.diagonal(diagonal)
-				.vis(vis)
-				.tree(tree)
-				.i(i)();
-		}
-
-		function color(d) {
-			return d._children ? "#3182bd" : d.children ? "#c6dbef" : "#fd8d3c";
-		}
-
+			function color(d) {
+				return d._children ? "#3182bd" : d.children ? "#c6dbef" : "#fd8d3c";
+			}
+    	})
     }
 
 
@@ -133,12 +144,6 @@ function chart () {
     myChart.source = function(value) {
       if (!arguments.length) {return source;}
       source = value;
-      return myChart;
-    };
-
-    myChart.root = function(value) {
-      if (!arguments.length) {return root;}
-      root = value;
       return myChart;
     };
 
