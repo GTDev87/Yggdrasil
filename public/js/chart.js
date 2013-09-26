@@ -1,10 +1,37 @@
-function chart () {
+function formattedObj(jsonData) {
+    var pairIsObjectType = function(pair){
+        var typeValue = typeof(pair[1]);
+        return typeValue === "array" || typeValue === "object";
+    };
+
+    var returnObject = {};
+
+    var pairs = _.pairs(jsonData);
+
+    returnObject.children = _.map(
+        pairs,
+        function (pair) {
+        	if(pair && !pairIsObjectType(pair)){
+        		var valObj = {};
+        		valObj.name = pair[0];
+        		valObj.children = [{name: pair[1]}];
+        		return valObj;
+        	}
+            return {name: pair[0], children: [{name: {}}]};
+        }
+    );
+
+    return returnObject;
+}
+
+
+function myTreeChart () {
 
     //defaults
     var width = 960,
     	height = 800,
 		barHeight = 20,
-		barWidth = width * .8,
+		barWidth = width * .2,
 		duration = 400,
 		diagonal = d3.svg.diagonal()
     		.projection(function(d) { return [d.y, d.x]; }),
@@ -23,8 +50,8 @@ function chart () {
     		myChart.update = function() { container.transition().duration(600).call(myChart) };
 
     		source = data[0];
-    		console.log("data = %j", data);
-    		console.log("source = %j", source);
+    		// console.log("data = %j", data);
+    		// console.log("source = %j", source);
 
 			// Compute the flattened node list. TODO use d3.layout.hierarchy.
 			var nodes = tree.nodes(source);
@@ -49,6 +76,7 @@ function chart () {
 				.attr("height", barHeight)
 				.attr("width", barWidth)
 				.style("fill", color)
+				.on("dblclick", dblclick)
 				.on("click", click);
 
 			nodeEnter.append("svg:text")
@@ -79,7 +107,7 @@ function chart () {
 			// Update the links…
 			var link = container.selectAll("path.link")
 				.data(tree.links(nodes), function(d) { 
-					console.log("new d = %j", d);
+					//console.log("new d = %j", d);
 					return d.target.id; 
 				});
 
@@ -87,9 +115,9 @@ function chart () {
 			link.enter().insert("svg:path", "g")
 				.attr("class", "link")
 				.attr("d", function(d) {
-					console.log("enter link d = %j", d);
+					// console.log("enter link d = %j", d);
 			    	var o = {x: source.x0, y: source.y0};
-			    	console.log("after enter");
+			    	// console.log("after enter");
 			    	return diagonal({source: o, target: o});
 				})
 			.transition()
@@ -116,8 +144,8 @@ function chart () {
 				d.y0 = d.y;
 			});
 
-			// Toggle children on click.
-			function click(d) {
+			// Toggle children on dblclick
+			function dblclick(d) {
 				if (d.children) {
 					d._children = d.children;
 					d.children = null;
@@ -125,11 +153,41 @@ function chart () {
 					d.children = d._children;
 					d._children = null;
 				}
-				console.log("d = %j", d)
+				// console.log("d = %j", d)
 
-				myChart
-					.source(d)
-					.update();
+				myChart.update();
+			}
+
+			function click(d) {
+
+				d3.select("#detailsBox")
+					.select("svg")
+                	.remove();
+
+                var detailsBox = d3.select("#detailsBox")
+                    .append("svg:svg")
+                        .attr("width", 960)
+                        .attr("height", 800)
+                    .append("svg:g")
+                        .attr("transform", "translate(20,30)");
+
+
+				
+
+				// console.log("details = %j", d.details);
+				// console.log("d3 format details = %j", jsonToD3Format(d.details));
+
+				var detailsObj = formattedObj(d.details);
+				detailsObj.name = d.name;
+				detailsObj.x0 = 0;
+				detailsObj.y0 = 0;
+
+
+				detailsBox
+					.datum([detailsObj])
+					.call(myTreeChart());
+
+
 			}
 
 			function color(d) {

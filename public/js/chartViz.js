@@ -6,6 +6,6 @@ function chartViz(selection, jsonData){
 
   selection
     .datum([jsonData])
-    .call(chart());
+    .call(myTreeChart());
 }
 

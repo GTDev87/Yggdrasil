@@ -61,14 +61,20 @@ function visualizeData (func) {
                 val: '='
             },
             link: function (scope, element, attrs) {
-                var selection = d3.select("#chart")
-                    .append("svg:svg")
-                        .attr("width", 960)
-                        .attr("height", 800)
-                    .append("svg:g")
-                        .attr("transform", "translate(20,30)");
+                
 
                 scope.$watch('val', function (newVal, oldVal) {
+                    d3.select("#chart")
+                        .select("svg")
+                        .remove();
+
+                    var selection = d3.select("#chart")
+                        .append("svg:svg")
+                            .attr("width", 960)
+                            .attr("height", 800)
+                        .append("svg:g")
+                            .attr("transform", "translate(20,30)");
+
                     console.log("testobj processed = %j", jsonToD3Format(newVal));
                     func(selection, jsonToD3Format(newVal));
                 });

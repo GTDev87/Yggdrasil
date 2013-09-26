@@ -1,66 +1,72 @@
 <section data-ng-controller="IndexController">
-    <h1>This is the home view</h1>
-    <label>Url</label>
-    <input ng-model="request.url"></input>
+    <div class="row">
+        <div class="span12">
 
-    <br/>
-    <button ng-click="toggleOauth()">Oauth</button>
+            <h1>This is the home view</h1>
+            <label>Url</label>
+            <input ng-model="request.url"></input>
 
-    <div ng-show="hasOauth">
-        <h3>Oauth</h3>
-        <label>Consumer Key</label>
-        <input ng-model="request.oauth.consumer_key"></input>
+            <br/>
+            <button ng-click="toggleOauth()">Oauth</button>
 
-        <label>Consumer Secret</label>
-        <input ng-model="request.oauth.consumer_secret"></input>
+            <div ng-show="hasOauth">
+                <h3>Oauth</h3>
+                <label>Consumer Key</label>
+                <input ng-model="request.oauth.consumer_key"></input>
 
-        <label>Token</label>
-        <input ng-model="request.oauth.token"></input>
+                <label>Consumer Secret</label>
+                <input ng-model="request.oauth.consumer_secret"></input>
 
-        <label>Verifier</label>
-        <input ng-model="request.oauth.token_secret"></input>
-    </div>
+                <label>Token</label>
+                <input ng-model="request.oauth.token"></input>
 
-    <br/>
-    
-    <button ng-click="getDataRequest()">REQUEST</button>
+                <label>Verifier</label>
+                <input ng-model="request.oauth.token_secret"></input>
+            </div>
 
-    <div ng-show="result.data">
-        <h1> RESULTS </h1>
-        <label>Query</label>
-        <input ng-model="result.query"></input></br>
-        <button ng-click="describeData()">Describe</button>
-        <label>Processed Description</label>
-<!--        {{result.processed}} -->
-        <label>All Data</label>
-        <!-- {{result.data}} -->
-        <label>Prune Fields</label>
-        <input ng-model="result.pruneFields"></input></br>
-        <button ng-click="pruneFieldsFn()">Ok</button>
+            <br/>
+            
+            <button ng-click="getDataRequest()">REQUEST</button>
 
-        <div ng-show="pruneResults">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th ng-repeat="name in pruneResults.names">{{name}}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="value in pruneResults.values">
-                        <td ng-repeat="name in pruneResults.names">{{value[name]}}</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div ng-show="result.data">
+                <h1> RESULTS </h1>
+                <label>Query</label>
+                <input ng-model="result.query"></input></br>
+                <button ng-click="describeData()">Describe</button>
+                <label>Processed Description</label>
+        <!--        {{result.processed}} -->
+                <label>All Data</label>
+                <!-- {{result.data}} -->
+                <label>Prune Fields</label>
+                <input ng-model="result.pruneFields"></input></br>
+                <button ng-click="pruneFieldsFn()">Ok</button>
+
+                <div ng-show="pruneResults">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th ng-repeat="name in pruneResults.names">{{name}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="value in pruneResults.values">
+                                <td ng-repeat="name in pruneResults.names">{{value[name]}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <chart-viz val="jsonData"></chart-viz>
         </div>
 
+        <div class="span8">
+            <div id="chart"></div>
+        </div>
 
-
-
-
-
-
+        <div class="span4">
+            <div id="detailsBox"></div>
+        </div>
     </div>
-
-    <chart-viz val="jsonData"></chart-viz>
-    <div id="chart"></div>
+    
 </section>
