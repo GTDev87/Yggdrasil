@@ -11,7 +11,9 @@
 		"angular-ui-utils": "0.0.4",
 		"json3": "~3.2.4",
 		"jquery": "~1.9.1",
-		"d3": "~3.3.3"
+		"d3": "~3.3.3",
+		"ng-csv": "latest",
+		"jquery-csv": "latest"
 	},
 	"devDependencies": {
 		"angular-mocks": "~1.0.5",

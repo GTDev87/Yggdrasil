@@ -170,27 +170,74 @@ angular.module('mean').controller('IndexController', ['$scope', 'Global', 'Pulls
     };
 
 
+
     $scope.hasOauth = false;
 
     $scope.toggleOauth = function () {
         $scope.hasOauth = !$scope.hasOauth;
         $scope.request.oauth = {};
+    };
+
+    
+
+    function formatCsvString(text){ return text.replace(/\"/g, '""'); }
+
+    function convertDataToCsv(colNames, values){
+      var colSeparator = '","';
+      var rowSeparator = '"\r\n"';
+      
+      return '"' + _.map(
+        colNames,
+        function(name){
+          return formatCsvString(name);
+        }
+      ).join(colSeparator) + rowSeparator + _.map(values, 
+        function(row) {
+          console.log("row = %j", row);
+          return _.map(colNames, function(name){
+            return formatCsvString(row[name].toString());
+          }).join(colSeparator);
+        }
+      ).join(rowSeparator) + '"';
     }
 
     $scope.downloadCSV = function() {
       console.log("$scope.pruneResults = %j", $scope.pruneResults);
-      var csvData = $scope.pruneResults.names.join(",") + "\n" + _.map($scope.pruneResults.values, 
-        function(row) {
-          console.log("row = %j", row);
-          return _.map($scope.pruneResults.names, function(name){
-            return row[name];
-          }).join(",");
-        }
-      ).join("\n");
+
+      var csvData = convertDataToCsv($scope.pruneResults.names, $scope.pruneResults.values);
+
+      
+
       console.log("csvData = %j", csvData);
       window.location.href = "data:text/csv;base64," + Base64.encode(csvData);
 
     };
+
+    // var initObj = _.reduce(
+    //     $scope.pruneResults.names, 
+    //     function(aggObj, name){
+    //       aggObj[name] = name;
+    //       return aggObj;
+    //     },
+    //     {}
+    //   );
+
+    //   console.log("$scope.pruneResults = %j", $scope.pruneResults);
+    //   var vals = _.map($scope.pruneResults.values, 
+    //     function(row) {
+    //       return _.reduce(
+    //         $scope.pruneResults.names,
+    //         function(aggObj, name){
+    //           aggObj[name] = row[name];
+    //           return aggObj;
+    //         },
+    //         {}
+    //       );
+    //     }
+    //   );
+    //   $scope.csvData = [initObj].concat(vals);
+
+    //   console.log("$scope.csvData = %j", $scope.csvData);
 
     $scope.getDataRequest = function () {
     	console.log("called getDataRequest");
