@@ -133,11 +133,12 @@ app.factory('Base64', function() {
 
 
 
-angular.module('mean').controller('IndexController', ['$scope', 'Global', 'Pulls', 'Base64', function ($scope, Global, Pulls, Base64) {
+angular.module('mean').controller('IndexController', ['$scope', 'Global', 'Pulls', 'Save', 'Find', 'Base64', function ($scope, Global, Pulls, Save, Find, Base64) {
     $scope.global = Global;
     $scope.request = {};
     $scope.request.oauth = {};
     $scope.result = {};
+    $scope.tree = {};
     
     $scope.jsonData = {
       name: "Animal",
@@ -185,7 +186,7 @@ angular.module('mean').controller('IndexController', ['$scope', 'Global', 'Pulls
     function convertDataToCsv(colNames, values){
       var colSeparator = '","';
       var rowSeparator = '"\r\n"';
-      
+
       return '"' + _.map(
         colNames,
         function(name){
@@ -242,14 +243,40 @@ angular.module('mean').controller('IndexController', ['$scope', 'Global', 'Pulls
     $scope.getDataRequest = function () {
     	console.log("called getDataRequest");
     	console.log("$scope.request = %j", $scope.request);
-    	Pulls.get($scope.request, function(pullResults){
+    	Pulls.post($scope.request, function(pullResults){
+        console.log("pullResults = %j", pullResults);
         $scope.jsonData = pullResults;
     		$scope.result.data = pullResults;
     		$scope.result.query = "/";
     		$scope.describeData()
-    		console.log("pullResults = %j", pullResults);
+    		
     		console.log("response");
     	});
+    }
+
+    $scope.saveData = function () {
+      console.log("called saveData");
+      console.log("$scope.jsonData = %j", $scope.jsonData);
+
+      var saveObject = $scope.tree;
+      saveObject.data = $scope.jsonData;
+
+      if(saveObject.data && saveObject.name){
+        Save.post(saveObject, function(saveResults){
+          console.log("saveResults = %j", saveResults);
+        });
+      }
+    }
+
+    $scope.findData = function () {
+      var findObject = $scope.tree;
+
+      console.log("called findData");
+      console.log("findObject = %j", findObject);
+      Find.get(findObject, function(findResults){
+        console.log("findResults = %j", findResults);
+        $scope.jsonData = findResults;
+      });
     }
 
     $scope.pruneFieldsFn = function (){

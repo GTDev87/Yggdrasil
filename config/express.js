@@ -10,6 +10,9 @@ var express = require('express'),
 module.exports = function(app, passport) {
     app.set('showStackError', true);
 
+    app.use(express.json({limit: '50mb'}));
+    app.use(express.bodyParser({limit: '50mb'}));
+
     //Should be placed before express.static
     app.use(express.compress({
         filter: function(req, res) {

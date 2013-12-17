@@ -75,7 +75,9 @@ module.exports = function(app, passport, auth) {
 
     //Article Routes
     var pulls = require('../app/controllers/pull');
-    app.post('/api/pulls', pulls.getData);
+    app.post('/api/pulls', pulls.pullData);
+    app.post('/api/save', pulls.saveData);
+    app.get('/api/find', pulls.findData);
 
     //Home route
     var index = require('../app/controllers/index');
