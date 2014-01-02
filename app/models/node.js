@@ -2,7 +2,7 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
-	flatterTree = require('flatterTree');
+	flatterTree = require('flatterTree'),
     Schema = mongoose.Schema;
 
 

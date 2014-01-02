@@ -16,7 +16,7 @@ exports.pullData = function(req, res) {
 
 	request.get(req.body, function(error, response, body){
 		if (!error && response.statusCode == 200) {
-			console.log("body = %j", body);
+			//console.log("body = %j", body);
 			var jsonResponse = JSON.parse(body);
 			if(_.isArray(jsonResponse)){
 				jsonResponse = _.extend({}, jsonResponse);
